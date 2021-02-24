@@ -6,30 +6,27 @@ class Scraper:
     def __init__(self, site) -> None:
         self.site = site
     
-    def print_url(self):
+    def sp(self):
         r = urllib.request.urlopen(self.site)
         html = r.read()
         parser = "html.parser"
         sp = BeautifulSoup(html, parser)
-        for tag in sp.find_all("a"):
+        return sp
+    
+    def print_url(self):
+        for tag in self.sp().find_all("a"):
             url = tag.get("href")
             if url is None:
                 continue
             print("\n" + url)
-    
-    def print_jslog(self):
-        r = urllib.request.urlopen(self.site)
-        html = r.read()
-        parser = "html.parser"
-        sp = BeautifulSoup(html, parser)
-        for tag in sp.find_all("a"):
-            jslog = tag.get("jslog")
-            if jslog is None:
-                continue
-            print("\n" + jslog)
+
+    def read_news(self):
+        with open("google_news.txt", "w") as file:
+            for tag in self.sp().find_all("a"):
+                text = tag.text
+                file.write("\n" + text)
 
 
-news = "https://news.google.com/"
-Scraper(news).print_url()
-Scraper(news).print_jslog()
+url = "https://news.google.com/topstories?hl=ja&gl=JP&ceid=JP:ja"
+Scraper(url).read_news()
 
